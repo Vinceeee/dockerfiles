@@ -1,0 +1,31 @@
+FROM centos:centos7.2.1511
+
+# remove files to enable systemd
+RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
+    systemd-tmpfiles-setup.service ] || rm -f $i; done); \
+    rm -f /lib/systemd/system/multi-user.target.wants/*;\
+    rm -f /etc/systemd/system/*.wants/*;\
+    rm -f /lib/systemd/system/local-fs.target.wants/*; \
+    rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
+    rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
+    rm -f /lib/systemd/system/basic.target.wants/*;\
+    rm -f /lib/systemd/system/anaconda.target.wants/*;
+
+ADD ./yum.repos.d/ /etc/yum.repos.d/
+
+RUN yum clean all && \
+  yum install -y vim memcached rsync openstack-swift* python-swiftclient \
+    python-pip rsyslog && \ 
+  yum clean all && rm -rf /var/cache/yum && \
+  mkdir -p /var/cache/swift && \
+  mkdir -p /var/run/swift && \
+  systemctl enable memcached rsyncd 
+
+ADD ./config/swift/ /etc/swift/
+ADD ./config/rsyncd.conf /etc/rsyncd.conf
+ADD ./config/rsyslog.d/ /etc/rsyslog.d/
+ADD ./config/bin  /home/swift/bin
+RUN chown -R swift:swift /etc/swift /var/log/swift /var/cache/swift /var/run/swift
+VOLUME [ "/sys/fs/cgroup","/etc/swift","/var/log" ]
+
+CMD ["/usr/sbin/init"]

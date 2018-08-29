@@ -1,0 +1,5 @@
+FROM centos:base
+COPY yum.repo.d/CentOS-Queen.repo /etc/yum.repos.d
+EXPOSE 80
+RUN yum install -y openstack-dashboard memcached python-memcached
+CMD ["/usr/sbin/init"]

@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+docker run -d --privileged --restart=always  --name=keystone1 --hostname=keystone1 -v `pwd`/keystone.conf:/etc/keystone/keystone.conf -v /var/log:/var/log -v /sys/fs/cgroup:/sys/fs/cgroup:ro -p 5001:5000 -p 35356:35357 openstack-keystone

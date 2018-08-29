@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+docker run -d --privileged --restart=always  --name=horizon --hostname=horizon -v /var/log:/var/log -v /sys/fs/cgroup:/sys/fs/cgroup:ro -p 8088:80 openstack-horizon
