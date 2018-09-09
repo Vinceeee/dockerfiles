@@ -1,0 +1,9 @@
+FROM centos:centos7.5.1804
+MAINTAINER "491323832@QQ.com"
+# my tools
+ADD CentOS-Base.repo /etc/yum.repo.d
+RUN yum install -y vim gcc python-devel && yum clean all && rm -rf /var/cache/yum
+ADD get-pip.py /
+RUN python get-pip.py && \
+  pip install -i https://pypi.tuna.tsinghua.edu.cn/simple requests pytest ipdb 
+ADD vimconf.tar.gz /root
