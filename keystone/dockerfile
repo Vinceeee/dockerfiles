@@ -1,11 +1,11 @@
 FROM centos:base
 COPY yum.repo.d/CentOS-Queen.repo /etc/yum.repos.d
 RUN yum install -y python-openstackclient openstack-selinux python-keystoneclient openstack-keystone httpd mod_wsgi && \
- yum clean all && rm -rf /var/cache/yum  && mkdir -p /etc/keystone/conf.d
+ yum clean all && rm -rf /var/cache/yum  && mkdir -p /etc/keystone/conf.d 
+RUN systemctl enable httpd
 COPY admin-openrc.sh /opt
 COPY entrypoint.sh /usr/local/bin
 RUN ln -s /usr/local/bin/entrypoint.sh /entrypoint.sh # backward compat
-VOLUME /etc/keystone/conf.d
 ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 5000 35357
 CMD ["/usr/sbin/init"]
