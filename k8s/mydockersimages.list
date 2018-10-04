@@ -1,0 +1,10 @@
+k8s.gcr.io/kube-controller-manager v1.12.0 07e068033cf2
+k8s.gcr.io/kube-apiserver v1.12.0 ab60b017e34f
+k8s.gcr.io/kube-scheduler v1.12.0 5a1527e735da
+k8s.gcr.io/kube-proxy v1.12.0 9c3a9d3f09a0
+k8s.gcr.io/etcd 3.2.24 3cab8e1b9802
+coredns/coredns 1.2.2 367cdc8433a4
+k8s.gcr.io/coredns 1.2.2 367cdc8433a4
+quay.io/calico/node v3.1.3 7eca10056c8e
+quay.io/calico/cni v3.1.3 9f355e076ea7
+k8s.gcr.io/pause 3.1 da86e6ba6ca1
