@@ -38,5 +38,5 @@ function grant_self_auth() {
 
 #create_certs
 #make_auth
-#create_registry
+create_registry
 grant_self_auth
