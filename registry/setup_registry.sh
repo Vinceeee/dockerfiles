@@ -11,7 +11,7 @@ function create_certs() {
 # make auth 
 function make_auth() {
     mkdir auth
-    docker run --entrypoint htpasswd registry:2 -Bbn admin 123456 > auth/htpasswd
+    docker run --rm --entrypoint htpasswd registry:2 -Bbn admin 123456 > auth/htpasswd
 }
 
 # run registry
@@ -28,6 +28,12 @@ function create_registry() {
         registry:2
 }
 
+function create_insecure_registry() {
+    docker run -d -p 5000:5000 --restart=always --name registry \
+        -v `pwd`/data:/var/lib/registry \
+        registry:2
+}
+
 # 
 function grant_self_auth() {
     fqdn="my.registry.com"
@@ -38,5 +44,6 @@ function grant_self_auth() {
 
 #create_certs
 #make_auth
-create_registry
-grant_self_auth
+#create_registry
+#grant_self_auth
+create_insecure_registry

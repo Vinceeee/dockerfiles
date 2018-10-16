@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+
+  web-proxy:
+    networks:
+      - swarm_net
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    deploy:
+      replicas: 2
+      mode: replicated
+      restart_policy:
+        condition: on-failure
+
+networks:
+  swarm_net:
+    external: true
