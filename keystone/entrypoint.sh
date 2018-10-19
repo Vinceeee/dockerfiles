@@ -15,6 +15,7 @@ su -s /bin/sh -c "keystone-manage db_sync" keystone
 if [[ $? -ne 0 ]];then
     echo "error in db_sync"
     tail /var/log/keystone/keystone.log
+    exit 1
 fi
 
 keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone

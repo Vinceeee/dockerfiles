@@ -1,4 +1,4 @@
-FROM centos:centos7.2.1511
+FROM centos:centos7.5.1804
 
 # remove files to enable systemd
 RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
@@ -15,7 +15,7 @@ ADD ./yum.repos.d/ /etc/yum.repos.d/
 
 RUN yum clean all && \
   yum install -y vim memcached rsync openstack-swift* python-swiftclient \
-    python-pip rsyslog && \ 
+     rsyslog && \ 
   yum clean all && rm -rf /var/cache/yum && \
   mkdir -p /var/cache/swift && \
   mkdir -p /var/run/swift && \
