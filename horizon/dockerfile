@@ -1,13 +1,10 @@
-FROM centos:base
-COPY yum.repo.d/CentOS-Queen.repo /etc/yum.repos.d
-EXPOSE 80
-RUN mkdir -p /opt/horizon
-COPY horizon opt/horizon
-RUN yum install -y  python-devel memcached python-memcached python-pip gcc httpd mod_wsgi gettext && \
-  pip install -r /opt/horizon/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+FROM centos:7.5.1804
+COPY yum.repo.d /etc/yum.repos.d
+RUN yum install -y openstack-dashboard memcache
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 ENV OPENSTACK_HOST 127.0.0.1
 ENV MEMCACHED_HOST 127.0.0.1
 ENTRYPOINT ["entrypoint.sh"]
-CMD ["/usr/sbin/init"]
+EXPOSE 80
+CMD ["httpd -DFOREGROUND"]
