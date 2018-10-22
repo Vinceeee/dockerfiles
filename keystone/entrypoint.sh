@@ -4,10 +4,20 @@
 CREDENTIAL="/etc/keystone/credential-keys"
 FERNET="/etc/keystone/fernet-keys"
 
+# if credential is existed , skip initialization
 if [[ -d $CREDENTIAL -a -d $FERNET ]];then
     ln -s /usr/share/keystone/wsgi-keystone.conf /etc/httpd/conf.d/
     exec "$@"
 fi
+
+if [[ -z $MYSQL_HOST -o -z $DB_PASSWD ]];then
+    echo "error : no enviroment variable 'mysql_host' or 'db_passwd' "
+    exit 8
+fi
+
+sed -i "s/<MYSQL_HOST>/$MYSQL_HOST/g" /etc/keystone/keystone.conf
+sed -i "s/<DB_PASSWD>/$MYSQL_HOST/g" /etc/keystone/keystone.conf
+
 
 chown -R keystone:keystone /etc/keystone
 

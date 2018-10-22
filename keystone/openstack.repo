@@ -1,5 +1,0 @@
-[openstack]
-name=openstack
-baseurl=https://mirrors.aliyun.com/centos/7.5.1804/cloud/x86_64/openstack-queens/
-enabled=1
-gpgcheck=1
