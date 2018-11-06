@@ -27,5 +27,5 @@ RUN chmod +x /usr/local/bin/* && ln -s /usr/local/bin/entrypoint.sh /entrypoint.
 ENV MYSQL_HOST 127.0.0.1:3306
 
 ENTRYPOINT ["entrypoint.sh"]
-EXPOSE 5000 35357
+EXPOSE 5000 
 CMD ["/usr/sbin/init"]
