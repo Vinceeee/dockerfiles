@@ -16,7 +16,7 @@ ADD ./yum.repo.d /etc/yum.repos.d
 RUN yum install -y python-openstackclient openstack-keystone httpd mod_wsgi && \
  yum clean all && rm -rf /var/cache/yum  && mkdir -p /etc/keystone/conf.d 
 
-RUN systemctl enable httpd
+RUN systemctl enable httpd 
 COPY admin-openrc.sh /opt
 COPY keystone.conf /etc/keystone
 COPY entrypoint.sh /usr/local/bin
@@ -25,7 +25,8 @@ RUN chmod +x /usr/local/bin/* && ln -s /usr/local/bin/entrypoint.sh /entrypoint.
 
 # env listed below
 ENV MYSQL_HOST 127.0.0.1:3306
+ENV KEYSTONE_BIND_IP 127.0.0.1
 
 ENTRYPOINT ["entrypoint.sh"]
-EXPOSE 5000 
+EXPOSE 5000
 CMD ["/usr/sbin/init"]
