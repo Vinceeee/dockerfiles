@@ -1,0 +1,6 @@
+FROM alpine:3.8
+MAINTAINER "491323832@QQ.com"
+# my tools
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+RUN apk add python3 vim python3-dev && ln -s /usr/bin/python3 /usr/bin/python && wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py && python get-pip.py && rm get-pip.py
+ADD vimconf.tar.gz /root

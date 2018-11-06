@@ -1,0 +1,8 @@
+FROM centos:centos7.5.1804
+
+ADD ./yum.repos.d/ /etc/yum.repos.d/
+ADD supervisord.conf /etc/supervisord.conf
+RUN yum install -y supervisor openssh-server redis openssh-clients 
+RUN mkdir /var/run/sshd && /usr/sbin/sshd-keygen -A
+
+CMD /usr/bin/supervisord -c /etc/supervisord.conf
