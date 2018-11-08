@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
 
 #docker run  -d --privileged -e KEYSTONE_DB_IP=192.168.10.106 --restart=always  --name=keystone1 --hostname=keystone1 -v `pwd`/keystone.conf:/etc/keystone/keystone.conf -v /var/log:/var/log -v /sys/fs/cgroup:/sys/fs/cgroup:ro -p 5000:5000  openstack-keystone
-docker run  -d --privileged -e MYSQL_HOST=127.0.0.1:3306 -e DB_PASSWD=123456  --name=keystone --hostname=keystone -v /sys/fs/cgroup:/sys/fs/cgroup:ro -p 5000:5000  openstack-keystone:rocky
+#docker run  -d --privileged -e MYSQL_HOST=127.0.0.1:3306 -e DB_PASSWD=123456  --name=keystone --hostname=keystone -v /sys/fs/cgroup:/sys/fs/cgroup:ro -p 5000:5000  openstack-keystone:rocky
+docker run  -d --network=host --name=keystone --hostname=keystone -p 5000:5000  openstack-keystone:rocky
