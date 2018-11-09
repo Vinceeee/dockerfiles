@@ -1,6 +1,6 @@
-FROM debian:9
-COPY sources.list /etc/apt/sources.list
-RUN apt update && apt install vim openjdk-8-jdk rsync ssh -y && rm -rf /var/lib/apt/lists/*
-ADD hadoop-2.8.5.tar.gz /opt
+FROM centos:7.5.1804
+COPY yum.repos.d /etc/yum.repos.d
+RUN yum install vim supervisor java-1.8.0-openjdk java-1.8.0-openjdk-devel rsync openssh-server openssh-clients -y && yum clean all && \
+    curl -o /tmp/hadoop-2.9.1.tar.gz http://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-2.9.1/hadoop-2.9.1.tar.gz && tar xf /tmp/hadoop-2.9.1.tar.gz -C /opt && rm -rf /tmp/*
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
-
+CMD supervisord -c /etc/supervisord.conf

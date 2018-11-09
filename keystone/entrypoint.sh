@@ -12,13 +12,13 @@ if [[ -d $CREDENTIAL && -d $FERNET ]];then
     exec "$@"
 fi
 
-if [[ -z $MYSQL_HOST || -z $DB_PASSWD ]];then
-    echo "error : no enviroment variable 'MYSQL_HOST' or 'DB_PASSWD' "
-    exit 8
-fi
+#if [[ -z $MYSQL_HOST || -z $DB_PASSWD ]];then
+#    echo "error : no enviroment variable 'MYSQL_HOST' or 'DB_PASSWD' "
+#    exit 8
+#fi
 
-sed -i "s/<MYSQL_HOST>/$MYSQL_HOST/g" /etc/keystone/keystone.conf
-sed -i "s/<DB_PASSWD>/$DB_PASSWD/g" /etc/keystone/keystone.conf
+#sed -i "s/<MYSQL_HOST>/$MYSQL_HOST/g" /etc/keystone/keystone.conf
+#sed -i "s/<DB_PASSWD>/$DB_PASSWD/g" /etc/keystone/keystone.conf
 
 
 chown -R keystone:keystone /etc/keystone

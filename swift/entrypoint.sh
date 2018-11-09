@@ -16,7 +16,9 @@ if [[ -f /etc/swift/*.builder  ]];then
 fi
 
 mkdir -p /srv/node
-if [[ -n $SWIFT_LOOP ]];then
+# if LOOP is 0 , use devices provided in SWIFT_DEVICES
+# if LOOP is 1 , use devices in looping
+if [[ $SWIFT_LOOP -eq 1 ]];then
     truncate -s $SWIFT_LOOP /srv/swift-disk
     mkfs.xfs -f /srv/swift-disk
     mount /srv/swift-disk /srv/node
@@ -62,6 +64,6 @@ done
 mkdir -p /var/cache/swift
 chown -R swift:swift /var/cache /srv/node /etc/swift
 
-swift-init all start
+#swift-init all start
 
 exec "$@"
