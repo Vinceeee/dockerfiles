@@ -12,9 +12,6 @@ if [[ -d $CREDENTIAL && -d $FERNET ]];then
     exec "$@"
 fi
 
-if [[ -z $DB_CONNECTION ]];then
-    DB_CONNECTION=sqlite://
-fi
 # use '#' instead of '/'
 # to avoid semantic confusion
 sed -i "s#<DB_CONNECTION>#$DB_CONNECTION#g" /etc/keystone/keystone.conf
