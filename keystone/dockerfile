@@ -1,32 +1,29 @@
 FROM centos:centos7.5.1804
 
-# remove files to enable systemd
-RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
-    systemd-tmpfiles-setup.service ] || rm -f $i; done); \
-    rm -f /lib/systemd/system/multi-user.target.wants/*;\
-    rm -f /etc/systemd/system/*.wants/*;\
-    rm -f /lib/systemd/system/local-fs.target.wants/*; \
-    rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
-    rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
-    rm -f /lib/systemd/system/basic.target.wants/*;\
-    rm -f /lib/systemd/system/anaconda.target.wants/*;
-
 ADD ./yum.repo.d /etc/yum.repos.d
 
-RUN yum install -y python-openstackclient openstack-keystone httpd mod_wsgi && \
+<<<<<<< HEAD
+RUN yum install -y supervisor python-openstackclient openstack-keystone httpd mod_wsgi memcached && \
+ yum clean all && rm -rf /var/cache/yum  && mkdir -p /etc/keystone/conf.d  
+=======
+RUN yum install -y python-openstackclient openstack-keystone httpd mod_wsgi memcached && \
  yum clean all && rm -rf /var/cache/yum  && mkdir -p /etc/keystone/conf.d 
+>>>>>>> c24409b7f5eff1600c8068e7fd6ef6a5e04cc562
 
-RUN systemctl enable httpd 
 COPY admin-openrc.sh /opt
 COPY keystone.conf /etc/keystone
 COPY entrypoint.sh /usr/local/bin
-COPY ./bin/utils.sh /usr/local/bin
+COPY supervisord.conf /etc/supervisord.conf
 RUN chmod +x /usr/local/bin/* && ln -s /usr/local/bin/entrypoint.sh /entrypoint.sh # backward compat
 
 # env listed below
-ENV MYSQL_HOST 127.0.0.1:3306
+ENV DB_CONNECTION sqlite:///keystone.db
+# for mariadb 
+# ENV DB_CONNECTION mysql+pymysql://keystone:<DB_PASSWD>@<MYSQL_HOST>/keystone
 ENV KEYSTONE_BIND_IP 127.0.0.1
+ENV MEMCACHED_SERVER 127.0.0.1:11211
 
 ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 5000
-CMD ["/usr/sbin/init"]
+
+CMD supervisord -c /etc/supervisord.conf
