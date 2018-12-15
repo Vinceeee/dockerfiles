@@ -12,11 +12,14 @@ if [[ -d $CREDENTIAL && -d $FERNET ]];then
     exec "$@"
 fi
 
+# use '#' instead of '/'
+# to avoid semantic confusion
 sed -i "s#<DB_CONNECTION>#${DB_CONNECTION}#g" /etc/keystone/keystone.conf
+sed -i "s#<memcache-server>#$MEMCACHED_SERVER#g" /etc/keystone/keystone.conf
 
 chown -R keystone:keystone /etc/keystone
 
-su -s /bin/sh -c "keystone-manage db_sync" keystone
+keystone-manage db_sync
 if [[ $? -ne 0 ]];then
     echo "error in db_sync"
     tail  /var/log/keystone/keystone.log
