@@ -24,8 +24,8 @@ COPY ./bin/utils.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/* && ln -s /usr/local/bin/entrypoint.sh /entrypoint.sh # backward compat
 
 # env listed below
-ENV MYSQL_HOST 127.0.0.1:3306
-ENV KEYSTONE_BIND_IP 127.0.0.1
+ENV ADMIN_PASS 123456
+ENV DB_CONNECTION sqlite://
 
 ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 5000

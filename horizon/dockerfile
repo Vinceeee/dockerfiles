@@ -1,10 +1,17 @@
 FROM centos:7.5.1804
 COPY yum.repo.d /etc/yum.repos.d
-RUN yum install -y openstack-dashboard memcache
+COPY horizon-stable-rocky /opt/horizon
+RUN yum install -y supervisor httpd mod_wsgi memcached python2-pip gcc python-devel && yum clean all
+RUN pip install -r /opt/horizon/requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
+RUN /opt/horizon/manage.py make_web_conf --wsgi && \
+  /opt/horizon/manage.py make_web_conf --apache > /etc/httpd/conf.d/horizon.conf 
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+ADD local_settings.py /opt/horizon/openstack_dashboard/local/local_settings.d
+ADD supervisord.conf /etc/supervisord.conf
+RUN chown apache:apache /opt/horizon/openstack_dashboard/local/local_settings.d/local_settings.py 
 ENV OPENSTACK_HOST 127.0.0.1
 ENV MEMCACHED_HOST 127.0.0.1
-ENTRYPOINT ["entrypoint.sh"]
+#ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 80
-CMD ["httpd -DFOREGROUND"]
+CMD /usr/bin/supervisord -c /etc/supervisord.conf

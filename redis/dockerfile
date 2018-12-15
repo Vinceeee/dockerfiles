@@ -1,0 +1,4 @@
+from redis:4-alpine3.8
+
+COPY redis.conf /etc/redis.conf
+CMD ["redis-cli","/etc/redis.conf"]

@@ -1,0 +1,33 @@
+FROM centos:centos7.5.1804
+
+# remove files to enable systemd
+ADD ./yum.repos.d/ /etc/yum.repos.d/
+
+RUN yum clean all && \
+  yum install -y supervisor vim memcached rsync openstack-swift* python-swiftclient httpd mod_wsgi \
+     rsyslog xfsprogs xfsdump && \ 
+  yum clean all && rm -rf /var/cache/yum && \
+  mkdir -p /var/cache/swift && \
+  mkdir -p /var/run/swift && \
+  mkdir -p /var/www/swift && \
+  systemctl enable memcached rsyncd 
+
+ADD ./wsgi/ /var/www/swift/
+ADD ./apache2/ /etc/httpd/conf.d/
+ADD ./config/swift/ /etc/swift/
+ADD supervisord.conf /etc/supervisord.conf
+ADD ./config/rsyncd.conf /etc/rsyncd.conf
+ADD ./config/rsyslog.d/ /etc/rsyslog.d/
+ADD ./config/test.conf /etc/
+ADD ./entrypoint.sh /usr/local/bin
+RUN chown -R swift:swift /etc/swift /var/log/swift /var/cache/swift /var/www/swift /var/run/swift && chmod +x /usr/local/bin/entrypoint.sh 
+
+ENV SWIFT_POWER 8
+ENV SWIFT_REPLICAS 2
+ENV SWIFT_LOOP 0
+ENV SWIFT_LOOP_SIZE 2G
+ENV APACHE_RUN_USER=swift
+ENV APACHE_RUN_GROUP=swift
+ENTRYPOINT ["entrypoint.sh"]
+
+CMD /usr/bin/supervisord -c /etc/supervisord.conf
