@@ -1,0 +1,53 @@
+version: '3'
+
+networks:
+    with_db:
+        driver: bridge
+    with_storage:
+        driver: bridge
+
+services:
+  db:
+    container_name: mariadb
+    image: mariadb:10.1
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_USER=keystone # not supervisor
+      - MYSQL_PASSWORD=123456
+      - MYSQL_DATABASE=keystone
+    volumes:
+        - ./data:/var/lib/mysql
+    networks:
+        - with_db
+
+  keystone:
+    container_name: keystone
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+    build: ./keystone
+#   image: openstack-keystone:rocky
+    environment:
+      - DB_CONNECTION=mysql+pymysql://keystone:123456@db/keystone
+      - KEYSTONE_BIND_IP=192.168.10.10
+#   links:
+#     - db:db
+    networks:
+        - with_db
+        - with_storage
+
+  swift:
+    container_name: swift
+    ports:
+      - "8080:8080"
+    build: ./swift
+#   links:
+#     - keystone:keystone
+    environment:
+      - SWIFT_LOOP=1
+      - SWIFT_REPLICAS=1
+    networks:
+        - with_storage
+

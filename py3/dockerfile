@@ -6,4 +6,4 @@ RUN apk add python3 vim python3-dev && ln -s /usr/bin/python3 /usr/bin/python &&
 ADD vimconf.tar.gz /root
 
 # which is used for running this container in deamon mode
-CMD ["/usr/sbin/crond"]
+CMD /usr/sbin/crond -n
