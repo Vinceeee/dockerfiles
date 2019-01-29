@@ -3,4 +3,5 @@ COPY yum.repos.d /etc/yum.repos.d
 RUN yum install vim supervisor java-1.8.0-openjdk java-1.8.0-openjdk-devel rsync openssh-server openssh-clients -y && yum clean all && \
     curl -o /tmp/hadoop-2.9.1.tar.gz http://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-2.9.1/hadoop-2.9.1.tar.gz && tar xf /tmp/hadoop-2.9.1.tar.gz -C /opt && rm -rf /tmp/*
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+COPY supervisord.conf /etc
 CMD supervisord -c /etc/supervisord.conf

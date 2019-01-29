@@ -1,0 +1,15 @@
+---
+- hosts: all
+  gather_facts: False
+  vars:
+    vlist: node1
+  tasks:
+  - name: testing commands
+    command: lsblk
+  - name: testing commands ignore errors
+    command: lsblkss
+    ignore_errors: True
+  - name: use template to format vlist {{ vlist }}
+    template:
+      src: ./template/tp1.j2
+      dest: /tmp/hosts
