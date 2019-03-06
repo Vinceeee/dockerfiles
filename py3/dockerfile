@@ -1,9 +1,10 @@
 FROM alpine:3.8
 MAINTAINER "491323832@QQ.com"
-# my tools
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
-RUN apk add python3 vim python3-dev && ln -s /usr/bin/python3 /usr/bin/python && wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py && python get-pip.py && rm get-pip.py
-ADD vimconf.tar.gz /root
+
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN apk add git python3 vim python3-dev && ln -s /usr/bin/python3 /usr/bin/python && git clone https://gitee.com/Vinceeee/myconfig.git /tmp/myconfig && cd /tmp/myconfig && sh init-vim && wget https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py && python /tmp/get-pip.py && pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+RUN mkdir -p /code
 
 # which is used for running this container in deamon mode
-CMD /usr/sbin/crond -n
+VOLUME /code
+CMD /usr/sbin/crond -f
