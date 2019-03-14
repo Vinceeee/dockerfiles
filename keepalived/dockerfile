@@ -1,0 +1,10 @@
+FROM centos:centos7.6.1810
+
+COPY entrypoint.sh /usr/local/bin
+RUN curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo && \
+  yum install -y keepalived && chmod +x /usr/local/bin/entrypoint.sh
+
+ADD keepalived.conf /etc/keepalived
+ENTRYPOINT ["entrypoint.sh"]
+
+CMD ["keepalived","-l","-n"]
