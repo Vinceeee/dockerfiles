@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  node1:
+      image: glusterfs:ubuntu1804
+      privileged: true
+      ports:
+          - 9999:24007
+      volumes:
+          - share:/data
+  node2:
+      privileged: true
+      image: glusterfs:ubuntu1804
+      volumes:
+          - share:/data
+  node3:
+      privileged: true
+      image: glusterfs:ubuntu1804
+      volumes:
+          - share:/data
+
+volumes:
+    share:
