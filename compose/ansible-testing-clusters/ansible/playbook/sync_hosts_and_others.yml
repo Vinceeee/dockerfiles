@@ -1,0 +1,18 @@
+---
+- hosts: all
+  gather_facts: no
+  remote_user: vagrant
+  become: yes
+  become_method: sudo
+  tasks:
+  - name: sync hosts
+    synchronize:
+      src: /etc/hosts
+      dest: /etc/hosts
+  - name: copy docker configs
+#   synchronize:
+    copy:
+      src: /home/vagrant/git_pkg/dockerfiles/ansible/playbook/docker
+      dest: /etc
+# - name: sync files 2
+#   shell: ls -al /etc/docker
