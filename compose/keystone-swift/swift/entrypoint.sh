@@ -19,9 +19,9 @@ mkdir -p /srv/node
 # if LOOP is 0 , use devices provided in SWIFT_DEVICES
 # if LOOP is 1 , use devices in looping
 if [[ $SWIFT_LOOP -eq 1 ]];then
-    truncate -s $SWIFT_LOOP_SIZE /srv/swift-disk
-    mkfs.xfs -f /srv/swift-disk
-    mount /srv/swift-disk /srv/node
+#   truncate -s $SWIFT_LOOP_SIZE /srv/swift-disk
+#   mkfs.xfs -f /srv/swift-disk
+#   mount /srv/swift-disk /srv/node
     devices=""
     for each in `seq $SWIFT_REPLICAS`;do
         devices=${devices}"swift${each} "
