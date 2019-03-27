@@ -1,13 +1,18 @@
 version: '2'
 services:
   node1:
+    container_name: mariadb_node1
     image: mariadb:10.1
     environment:
       - TERM=xterm
       - MYSQL_ROOT_PASSWORD=admin
       - MYSQL_INITDB_SKIP_TZINFO=1
-    command: mysqld --wsrep_new_cluster
+    command: mysqld --wsrep_new_cluster --wsrep_cluster_address=gcomm://node1,node2,node3
+    volumes:
+        - ./data_node1:/var/lib/mysql
+
   node2:
+    container_name: mariadb_node2
     image: mariadb:10.1
     depends_on:
       - node1
@@ -15,8 +20,12 @@ services:
       - TERM=xterm
       - MYSQL_ROOT_PASSWORD=admin
       - MYSQL_INITDB_SKIP_TZINFO=1
-    entrypoint: mysqld --wsrep_cluster_address=gcomm://node1 --user=mysql
+    entrypoint: mysqld --wsrep_cluster_address=gcomm://node1,node2,node3
+    volumes:
+        - ./data_node2:/var/lib/mysql
+
   node3:
+    container_name: mariadb_node3
     image: mariadb:10.1
     depends_on:
       - node1
@@ -24,4 +33,6 @@ services:
       - TERM=xterm
       - MYSQL_ROOT_PASSWORD=admin
       - MYSQL_INITDB_SKIP_TZINFO=1
-    entrypoint: mysqld --wsrep_cluster_address=gcomm://node1 --user=mysql
+    entrypoint: mysqld --wsrep_cluster_address=gcomm://node1,node2,node3
+    volumes:
+        - ./data_node3:/var/lib/mysql

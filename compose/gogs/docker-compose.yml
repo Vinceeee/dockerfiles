@@ -9,14 +9,20 @@ services:
     volumes:
       - ./gogs:/data
     restart: always
-    links:
-        - mysql:mysql
 
-  mysql:
-    image: mariadb:10.1
+  drone-server:
     restart: always
+    container_name: drone-server
+    image: drone/drone:1
+    ports:
+      - "8888:80"
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ./drone:/var/lib/drone
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - MYSQL_ROOT_PASSWORD=123456
-      - MYSQL_DATABASE=gogs
+      - DRONE_GOGS=true
+      - DRONE_GOGS_SERVER=http://gogs:3000
+      - DRONE_SECRET=c38eb091961962ce7006326f5959a060
+      - DRONE_GIT_ALWAYS_AUTH=false
+      - DRONE_SERVER_HOST=drone-server
+      - DRONE_SERVER_PROTO=http

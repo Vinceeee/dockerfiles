@@ -1,34 +1,24 @@
 version: '3'
 
-networks:
-    ansibles:
-        driver: bridge
-
 services:
+
   node1:
     container_name: node1
-    image: ansible:2.6
+    build: ./ansible
     restart: always
-    networks:
-        - ansibles
+
   node2:
     container_name: node2
-    image: ansible:2.6
+    build: ./ansible
     restart: always
-    networks:
-        - ansibles
 
   node3:
     container_name: node3
-    image: ansible:2.6
+    build: ./ansible
     restart: always
-    networks:
-        - ansibles
 
   node4:
     container_name: node4
-    image: ansible:2.6
+    build: ./ansible
     restart: always
-    networks:
-        - ansibles
 

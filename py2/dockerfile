@@ -1,9 +1,10 @@
-FROM centos:centos7.5.1804
+FROM alpine:3.8
 MAINTAINER "491323832@QQ.com"
-# my tools
-ADD CentOS-Base.repo /etc/yum.repo.d
-RUN yum install -y vim gcc python-devel && yum clean all && rm -rf /var/cache/yum
-ADD get-pip.py /
-RUN python get-pip.py && \
-  pip install -i https://pypi.tuna.tsinghua.edu.cn/simple requests pytest ipdb 
-ADD vimconf.tar.gz /root
+
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN apk add python2 python2-dev && wget https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py && python /tmp/get-pip.py && pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && rm -rf /tmp/*
+RUN mkdir -p /code
+
+# which is used for running this container in deamon mode
+VOLUME /code
+CMD /usr/sbin/crond -f
