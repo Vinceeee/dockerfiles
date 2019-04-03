@@ -1,6 +1,5 @@
 #!/usr/bin/env sh
 
-
 # create cerificate
 function create_certs() {
     mkdir certs
@@ -18,9 +17,6 @@ function make_auth() {
 function create_registry() {
     docker run -d -p 5000:5000 --restart=always --name registry \
         -v `pwd`/auth:/auth \
-#       -e "REGISTRY_AUTH=htpasswd" \
-#       -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" \
-#       -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd \
         -v `pwd`/data:/var/lib/registry \
         -v `pwd`/certs:/certs \
         -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt \
