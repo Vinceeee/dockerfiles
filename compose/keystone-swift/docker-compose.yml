@@ -32,14 +32,12 @@ services:
     ports:
       - "5000:5000"
     build: ./keystone
-#   image: openstack-keystone:rocky
     environment:
       - DB_CONNECTION=mysql+pymysql://keystone:123456@db/keystone
       - KEYSTONE_BIND_IP=192.168.10.10
+      - SWIFT_ENDPOINT=192.168.10.10:8080
     volumes:
       - share_data:/share
-#   links:
-#     - db:db
     networks:
         - with_db
         - with_storage
@@ -49,8 +47,6 @@ services:
     ports:
       - "8080:8080"
     build: ./swift
-#   links:
-#     - keystone:keystone
     environment:
       - SWIFT_LOOP=1
       - SWIFT_REPLICAS=1
@@ -58,4 +54,3 @@ services:
         - with_storage
     volumes:
       - share_data:/share
-
