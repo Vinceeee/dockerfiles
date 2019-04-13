@@ -2,7 +2,7 @@ version: '2'
 services:
   node1:
     container_name: mariadb_node1
-    image: mariadb:10.1
+    image: mariadb:10.2.23
     environment:
       - TERM=xterm
       - MYSQL_ROOT_PASSWORD=admin
@@ -13,7 +13,7 @@ services:
 
   node2:
     container_name: mariadb_node2
-    image: mariadb:10.1
+    image: mariadb:10.2.23
     depends_on:
       - node1
     environment:
@@ -26,7 +26,7 @@ services:
 
   node3:
     container_name: mariadb_node3
-    image: mariadb:10.1
+    image: mariadb:10.2.23
     depends_on:
       - node1
     environment:

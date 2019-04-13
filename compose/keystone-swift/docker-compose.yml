@@ -27,6 +27,7 @@ services:
     environment:
       - DB_CONNECTION=mysql+pymysql://keystone:123456@db/keystone
       - KEYSTONE_BIND_IP=192.168.10.10
+      - SWIFT_ENDPOINT=192.168.10.10:8080
     volumes:
       - share_data:/share
 
@@ -40,4 +41,3 @@ services:
       - SWIFT_REPLICAS=1
     volumes:
       - share_data:/share
-
