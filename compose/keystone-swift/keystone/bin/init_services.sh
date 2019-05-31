@@ -52,6 +52,6 @@ echo "projects are initialized ."
 
 
 echo "initialize user/project ."
-add_user
+add_users
 
 exit 0

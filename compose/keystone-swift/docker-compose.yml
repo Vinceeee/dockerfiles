@@ -1,11 +1,5 @@
 version: '3'
 
-networks:
-    with_db:
-        driver: bridge
-    with_storage:
-        driver: bridge
-
 volumes:
     share_data:
     db:
@@ -22,8 +16,6 @@ services:
       - MYSQL_DATABASE=keystone
     volumes:
         - db:/var/lib/mysql
-    networks:
-        - with_db
 
   keystone:
     container_name: keystone
@@ -34,13 +26,10 @@ services:
     build: ./keystone
     environment:
       - DB_CONNECTION=mysql+pymysql://keystone:123456@db/keystone
-      - KEYSTONE_BIND_IP=192.168.10.10
-      - SWIFT_ENDPOINT=192.168.10.10:8080
+      - KEYSTONE_BIND_IP=192.168.0.10
+      - SWIFT_ENDPOINT=192.168.0.10:8080
     volumes:
       - share_data:/share
-    networks:
-        - with_db
-        - with_storage
 
   swift:
     container_name: swift
@@ -50,7 +39,5 @@ services:
     environment:
       - SWIFT_LOOP=1
       - SWIFT_REPLICAS=1
-    networks:
-        - with_storage
     volumes:
       - share_data:/share
