@@ -14,16 +14,14 @@ ADD supervisord.conf /etc
 ADD ./config/swift/ /etc/swift/
 ADD ./config/rsyncd.conf /etc/rsyncd.conf
 ADD ./config/test.conf /etc/
-ADD ./entrypoint.sh /usr/local/bin
-RUN chown -R swift:swift  /etc/swift /var/log/swift /var/cache/swift /var/run/swift && chmod +x /usr/local/bin/entrypoint.sh 
+COPY ./bin /usr/local/bin
+RUN chown -R swift:swift  /etc/swift /var/log/swift /var/cache/swift /var/run/swift && chmod +x /usr/local/bin/*
 
-ENV SWIFT_POWER 8
-ENV SWIFT_REPLICAS 2
-ENV SWIFT_LOOP 0
-ENV SWIFT_LOOP_SIZE 2G
+ENV SWIFT_LOOP_SIZE 1G
+ENV SWIFT_TYPE proxy
+ENV RING_DIR /rings
 ENV APACHE_RUN_USER=swift
 ENV APACHE_RUN_GROUP=swift
 ENTRYPOINT ["entrypoint.sh"]
 
 CMD /usr/bin/supervisord -c /etc/supervisord.conf
-#CMD swift-init all start -n 

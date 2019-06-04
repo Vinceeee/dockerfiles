@@ -31,13 +31,27 @@ services:
     volumes:
       - share_data:/share
 
-  swift:
-    container_name: swift
-    ports:
-      - "8080:8080"
+  init_swift_ring:
+    container_name: init-swift
+    entrypoint: build_ring.sh
     build: ./swift
+    volumes:
+      - ./bin:/usr/local/bin
+      - ./rings:/swift-rings
     environment:
-      - SWIFT_LOOP=1
-      - SWIFT_REPLICAS=1
+      - RING_DIR=/swift-rings
+      - REPLICAS=2
+      - POWER=10
     volumes:
       - share_data:/share
+
+        #  swift:
+        #    container_name: swift
+        #    ports:
+        #      - "8080:8080"
+        #    build: ./swift
+        #    environment:
+        #      - SWIFT_LOOP=1
+        #      - SWIFT_REPLICAS=1
+        #    volumes:
+        #      - share_data:/share
