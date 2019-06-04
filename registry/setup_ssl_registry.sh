@@ -5,7 +5,6 @@ fqdn="my.registry.com"
 function create_certs() {
     rm -rf certs
     mkdir certs
-
     openssl req -newkey rsa:4096 -nodes -sha256 -keyout certs/domain.key -x509 -days 1000 -out certs/domain.crt -subj "/C=CN/ST=Guangdong/L=Guangzhou/O=Ame.com/OU=IT/CN=${fqdn}"
 
     echo "certs generated"
@@ -27,7 +26,7 @@ function create_registry() {
 
 function grant_self_auth() {
     sudo mkdir -p /etc/docker/certs.d/$fqdn:5000
-    sudo cp certs/docker.crt /etc/docker/certs.d/$fqdn:5000/ca.crt
+    sudo cp certs/domain.crt /etc/docker/certs.d/$fqdn:5000/ca.crt
 }
 
 create_certs

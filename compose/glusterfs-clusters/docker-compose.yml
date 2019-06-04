@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  node1:
+      build: ./glusterfs
+      privileged: true
+      ports:
+          - 9999:24007
+      volumes:
+          - share:/data
+  node2:
+      build: ./glusterfs
+      privileged: true
+      volumes:
+          - share:/data
+  node3:
+      build: ./glusterfs
+      privileged: true
+      volumes:
+          - share:/data
+
+volumes:
+    share:

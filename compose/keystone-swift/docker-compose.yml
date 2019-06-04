@@ -7,7 +7,7 @@ volumes:
 services:
   db:
     container_name: mariadb
-    image: mariadb:10.1
+    image: mariadb:10.2
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=123456
@@ -28,6 +28,10 @@ services:
       - DB_CONNECTION=mysql+pymysql://keystone:123456@db/keystone
       - KEYSTONE_BIND_IP=192.168.0.10
       - SWIFT_ENDPOINT=192.168.0.10:8080
+#     - DB_CONNECTION=mysql+pymysql://keystone:123456@db/keystone
+      - DB_CONNECTION=sqlite:///var/lib/keystone.db
+      - KEYSTONE_BIND_IP=192.168.10.10
+      - SWIFT_ENDPOINT=192.168.10.10:8080
     volumes:
       - share_data:/share
 
@@ -42,6 +46,8 @@ services:
       - RING_DIR=/swift-rings
       - REPLICAS=2
       - POWER=10
+      - SWIFT_LOOP=1
+      - SWIFT_REPLICAS=1
     volumes:
       - share_data:/share
 
