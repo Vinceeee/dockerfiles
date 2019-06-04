@@ -13,28 +13,23 @@ function entrypoint_for_storage() {
     mkdir -p /srv/node
     for dev in $devices;do
         mkdir -p /srv/node/$dev
-        mount /dev/$dev /srv/node/$dev
-        if [[ $? -ne 0 ]];then
-            echo "error in mounting devices."
-            exit 8
-        fi
     done
     IFS=$OLD_IFS
 
     chown -R swift:swift /var/cache /srv/node /etc/swift
-    rm -f /etc/swift/proxy\*
+    rm -rf /etc/swift/proxy*
 }
 
 function entrypoint_for_proxy() {
     #function_body
     cd /etc/swift
-    rm -f account\* container\* object\*
+    rm -rf account* container* object*
     chown -R swift:swift /var/cache  /etc/swift
 }
 
 
 mkdir -p $RING_DIR
-sed -i "s?/swift_dir = \*?swift_dir = ${RING_DIR}?g" /etc/swift/*.conf
+sed -i "s?swift_dir = .*?swift_dir = ${RING_DIR}?g" /etc/swift/*.conf
 # build some cache
 mkdir -p /var/cache/swift
 

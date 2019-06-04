@@ -7,7 +7,7 @@ volumes:
 services:
   db:
     container_name: mariadb
-    image: mariadb:10.2
+    image: mariadb:10.1
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=123456
@@ -19,45 +19,57 @@ services:
 
   keystone:
     container_name: keystone
+    restart: always
     depends_on:
       - db
     ports:
       - "5000:5000"
     build: ./keystone
     environment:
-      - DB_CONNECTION=mysql+pymysql://keystone:123456@db/keystone
       - KEYSTONE_BIND_IP=192.168.0.10
       - SWIFT_ENDPOINT=192.168.0.10:8080
-#     - DB_CONNECTION=mysql+pymysql://keystone:123456@db/keystone
-      - DB_CONNECTION=sqlite:///var/lib/keystone.db
-      - KEYSTONE_BIND_IP=192.168.10.10
-      - SWIFT_ENDPOINT=192.168.10.10:8080
+      - DB_CONNECTION=mysql+pymysql://keystone:123456@db/keystone
     volumes:
       - share_data:/share
 
   init_swift_ring:
     container_name: init-swift
-    entrypoint: build_ring.sh
+    entrypoint: "build_ring.sh"
     build: ./swift
-    volumes:
-      - ./bin:/usr/local/bin
-      - ./rings:/swift-rings
     environment:
       - RING_DIR=/swift-rings
       - REPLICAS=2
       - POWER=10
-      - SWIFT_LOOP=1
-      - SWIFT_REPLICAS=1
     volumes:
       - share_data:/share
+      - ./bin:/usr/local/bin
+      - /tmp/rings:/swift-rings
 
-        #  swift:
-        #    container_name: swift
-        #    ports:
-        #      - "8080:8080"
-        #    build: ./swift
-        #    environment:
-        #      - SWIFT_LOOP=1
-        #      - SWIFT_REPLICAS=1
-        #    volumes:
-        #      - share_data:/share
+  proxy:
+    container_name: proxy
+    restart: always
+    depends_on:
+      - init_swift_ring
+    ports:
+      - "8080:8080"
+    build: ./swift
+    environment:
+      - SWIFT_TYPE=proxy
+      - RING_DIR=/swift-rings
+    volumes:
+      - share_data:/share
+      - /tmp/rings:/swift-rings
+
+  storage1:
+    container_name: storage1
+    restart: always
+    build: ./swift
+    depends_on:
+      - init_swift_ring
+    environment:
+      - SWIFT_TYPE=storage
+      - RING_DIR=/swift-rings
+      - SWIFT_DEVICES=swift1,swift2
+    volumes:
+      - share_data:/share
+      - /tmp/rings:/swift-rings
