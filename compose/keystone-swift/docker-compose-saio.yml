@@ -1,0 +1,62 @@
+version: '3'
+
+volumes:
+    share_data:
+    db:
+
+services:
+  db:
+    container_name: mariadb
+    image: mariadb:10.1
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_USER=keystone # not supervisor
+      - MYSQL_PASSWORD=123456
+      - MYSQL_DATABASE=keystone
+    volumes:
+        - db:/var/lib/mysql
+
+  keystone:
+    container_name: keystone
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+    build: ./keystone
+    environment:
+      - KEYSTONE_BIND_IP=192.168.0.10
+      - SWIFT_ENDPOINT=192.168.0.10:8080
+      - DB_CONNECTION=mysql+pymysql://keystone:123456@db/keystone
+    volumes:
+      - share_data:/share
+
+  init_swift_ring:
+    container_name: init-swift
+    entrypoint: "build_ring_saio.sh"
+    build: ./swift
+    environment:
+      - RING_DIR=/swift-rings
+      - REPLICAS=2
+      - POWER=11
+    volumes:
+      - share_data:/share
+      - ./bin:/usr/local/bin
+      - /tmp/rings:/swift-rings
+
+  swift:
+    container_name: swift
+    restart: always
+    depends_on:
+      - init_swift_ring
+    ports:
+      - "8080:8080"
+    build: ./swift
+    environment:
+      - SWIFT_TYPE=saio
+      - RING_DIR=/swift-rings
+      - SWIFT_DEVICES=swift1,swift2
+    volumes:
+      - share_data:/share
+      - /tmp/rings:/swift-rings
