@@ -39,13 +39,13 @@ fi
 
 # execute project initialization (Only Swift)
 openstack project show service
-if [[ $? -eg 0 ]]; then
+if [[ $? -eq 0 ]]; then
     echo "service already inited , skipped init"
 else
     openstack project create service
     openstack user create swift --password 123456 --project service
     openstack role add admin --user swift --project service
-    openstack service create object-store --name swift \
+    openstack service create object-store --name swift
     openstack endpoint create --region RegionOne object-store public http://$SWIFT_ENDPOINT/v1/AUTH_%\(tenant_id\)s
     openstack endpoint create --region RegionOne object-store admin http://$SWIFT_ENDPOINT/
     openstack endpoint create --region RegionOne object-store internal http://$SWIFT_ENDPOINT/v1/AUTH_%\(tenant_id\)s

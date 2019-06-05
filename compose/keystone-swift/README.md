@@ -28,6 +28,15 @@ Centos 7 的用户可执行`sh init-env.sh`,即可自动安装docker以及docker
 
 3. 安装swiftclient到本地 `pip install python-swiftclient`
 
-4. 配置账户信息,开始使用swift,默认会创建home用户,其openrc.sh如下:
+4. 配置账户信息,开始使用swift,默认会创建home用户,其openrc.sh如下(记得修改${LOCAL_BIND_IP}):
 ```
+export OS_USERNAME=home
+export OS_PASSWORD=123456
+export OS_PROJECT_NAME=home
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_AUTH_URL=http://${LOCAL_BIND_IP}:5000/v3
+export OS_IDENTITY_API_VERSION=3
 ```
+
+修改LOCAL_BIND_IP后,并运行,则可在容器外部访问swift对象存储
