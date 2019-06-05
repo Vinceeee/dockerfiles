@@ -1,4 +1,5 @@
-version: '3'
+# version: '3'
+version: '2'
 
 volumes:
     share_data:
@@ -11,11 +12,13 @@ services:
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=123456
-      - MYSQL_USER=keystone # not supervisor
+      - MYSQL_USER=keystone
       - MYSQL_PASSWORD=123456
       - MYSQL_DATABASE=keystone
     volumes:
         - db:/var/lib/mysql
+    networks:
+      db:
 
   keystone:
     container_name: keystone
@@ -25,12 +28,13 @@ services:
     ports:
       - "5000:5000"
     build: ./keystone
-    environment:
-      - KEYSTONE_BIND_IP=192.168.10.10
-      - SWIFT_ENDPOINT=192.168.10.10:8080
-      - DB_CONNECTION=mysql+pymysql://keystone:123456@db/keystone
+    env_file:
+      ./keystone/keystone.env
     volumes:
       - share_data:/share
+    networks:
+      db:
+      outnet:
 
   init_swift_ring:
     container_name: init-swift
@@ -59,6 +63,10 @@ services:
     volumes:
       - share_data:/share
       - /tmp/rings:/swift-rings
+    networks:
+      outnet:
+      innet:
+        ipv4_address: 172.11.10.100
 
   storage1:
     container_name: storage1
@@ -73,6 +81,9 @@ services:
     volumes:
       - share_data:/share
       - /tmp/rings:/swift-rings
+    networks:
+      innet:
+        ipv4_address: 172.11.10.1
 
   storage2:
     container_name: storage2
@@ -87,3 +98,16 @@ services:
     volumes:
       - share_data:/share
       - /tmp/rings:/swift-rings
+    networks:
+      innet:
+        ipv4_address: 172.11.10.2
+
+networks:
+  db:
+  outnet:
+  innet:
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.11.10.0/24
+        gateway: 172.11.10.10

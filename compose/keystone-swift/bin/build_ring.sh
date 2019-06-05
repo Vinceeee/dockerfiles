@@ -6,7 +6,7 @@ set -e
 echo "build rings "
 
 # HOSTS=storage1,storage2
-HOSTS=storage1,storage2
+HOSTS=172.11.10.1,172.11.10.2
 DEVICES=swift1,swift2
 
 builders="account.builder container.builder object.builder object-1.builder"
@@ -29,8 +29,8 @@ swift-ring-builder object-1.builder create $POWER $REPLICAS 1
 OLD_IFS=$IFS
 IFS=,
 i=1
-for dev in $DEVICES;do
-    for host in $HOSTS;do
+for host in $HOSTS;do
+    for dev in $DEVICES;do
         swift-ring-builder account.builder add --ip $host --region 1 --zone $i --port 6012 --device $dev --weight 100
         swift-ring-builder container.builder add --ip $host --region 1 --zone $i --port 6011 --device $dev --weight 100
         swift-ring-builder object.builder add --ip $host --region 1 --zone $i --port 6010 --device $dev --weight 100

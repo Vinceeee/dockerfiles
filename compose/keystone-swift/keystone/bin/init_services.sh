@@ -19,6 +19,7 @@ function gen_openrc() {
 
 function add_users() {
 
+    echo "initialize user/project ."
     openstack project create home
     openstack user create home --password 123456 --project home
     openstack role add admin --user home --project home
@@ -37,21 +38,23 @@ if [[ -f /root/.init_checked ]]; then
 fi
 
 # execute project initialization (Only Swift)
-openstack project create service
-openstack user create swift --password 123456 --project service
-openstack role add admin --user swift --project service
-openstack service create object-store --name swift \
-                                     --description "Swift Service"
-openstack endpoint create --region RegionOne object-store public http://$SWIFT_ENDPOINT/v1/AUTH_%\(tenant_id\)s
-openstack endpoint create --region RegionOne object-store admin http://$SWIFT_ENDPOINT/
-openstack endpoint create --region RegionOne object-store internal http://$SWIFT_ENDPOINT/v1/AUTH_%\(tenant_id\)s
+openstack project show service
+if [[ $? -eg 0 ]]; then
+    echo "service already inited , skipped init"
+else
+    openstack project create service
+    openstack user create swift --password 123456 --project service
+    openstack role add admin --user swift --project service
+    openstack service create object-store --name swift \
+    openstack endpoint create --region RegionOne object-store public http://$SWIFT_ENDPOINT/v1/AUTH_%\(tenant_id\)s
+    openstack endpoint create --region RegionOne object-store admin http://$SWIFT_ENDPOINT/
+    openstack endpoint create --region RegionOne object-store internal http://$SWIFT_ENDPOINT/v1/AUTH_%\(tenant_id\)s
+    add_users
+fi
 
 
 touch /root/.init_checked
 echo "projects are initialized ."
 
-
-echo "initialize user/project ."
-add_users
 
 exit 0

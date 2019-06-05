@@ -40,6 +40,7 @@ function entrypoint_for_proxy() {
 
 mkdir -p $RING_DIR
 sed -i "s?swift_dir = .*?swift_dir = ${RING_DIR}?g" /etc/swift/*.conf
+sed -i "s?# swift_dir = .*?swift_dir = ${RING_DIR}?g" /etc/swift/*.conf
 # build some cache
 mkdir -p /var/cache/swift
 
