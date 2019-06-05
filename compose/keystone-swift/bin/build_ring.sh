@@ -1,11 +1,12 @@
 #!/bin/bash
 
+set -x
 set -e
 
 echo "build rings "
 
 # HOSTS=storage1,storage2
-HOSTS=storage1
+HOSTS=storage1,storage2
 DEVICES=swift1,swift2
 
 builders="account.builder container.builder object.builder object-1.builder"
