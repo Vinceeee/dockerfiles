@@ -27,5 +27,4 @@ systemctl start docker
 
 curl http://mirrors.aliyun.com/docker-toolbox/linux/compose/1.21.2/docker-compose-Linux-x86_64 -o /usr/bin/docker-compose
 chmod +x /usr/bin/docker-compose
-
 echo "docker & docker-compose installed"
