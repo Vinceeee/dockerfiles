@@ -1,0 +1,5 @@
+FROM mariadb:10.3
+
+COPY conf.d /etc/mysql/conf.d
+COPY scripts.d /docker-entrypoint-initdb.d
+COPY docker-entrypoint.sh /usr/local/bin

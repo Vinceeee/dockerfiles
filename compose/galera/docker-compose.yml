@@ -1,38 +1,41 @@
 version: '2'
+
+volumes:
+    mariadb_data1:
+    mariadb_data2:
+    mariadb_data3:
+
 services:
-  node1:
-    container_name: mariadb_node1
-    image: mariadb:10.2.23
-    environment:
-      - TERM=xterm
-      - MYSQL_ROOT_PASSWORD=admin
-      - MYSQL_INITDB_SKIP_TZINFO=1
-    command: mysqld --wsrep_new_cluster --wsrep_cluster_address=gcomm://node1,node2,node3
-    volumes:
-        - ./data_node1:/var/lib/mysql
 
-  node2:
-    container_name: mariadb_node2
-    image: mariadb:10.2.23
-    depends_on:
-      - node1
-    environment:
-      - TERM=xterm
-      - MYSQL_ROOT_PASSWORD=admin
-      - MYSQL_INITDB_SKIP_TZINFO=1
-    entrypoint: mysqld --wsrep_cluster_address=gcomm://node1,node2,node3
+  mariadb1:
+    image: mariadb:10.3-mine
     volumes:
-        - ./data_node2:/var/lib/mysql
+      - 'mariadb_data1:/var/lib/mysql'
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - GALERA_INIT=1
+      - WSREP_ON=1
 
-  node3:
-    container_name: mariadb_node3
-    image: mariadb:10.2.23
+  mariadb2:
     depends_on:
-      - node1
-    environment:
-      - TERM=xterm
-      - MYSQL_ROOT_PASSWORD=admin
-      - MYSQL_INITDB_SKIP_TZINFO=1
-    entrypoint: mysqld --wsrep_cluster_address=gcomm://node1,node2,node3
+      - mariadb1
+    image: mariadb:10.3-mine
     volumes:
-        - ./data_node3:/var/lib/mysql
+      - 'mariadb_data2:/var/lib/mysql'
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - GALERA_INIT=0
+      - GCOMM=mariadb1,mariadb2,mariadb3
+      - WSREP_ON=1
+
+  mariadb3:
+    depends_on:
+      - mariadb1
+    image: mariadb:10.3-mine
+    volumes:
+      - 'mariadb_data3:/var/lib/mysql'
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - GALERA_INIT=0
+      - GCOMM=mariadb1,mariadb2,mariadb3
+      - WSREP_ON=1
