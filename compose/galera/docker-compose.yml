@@ -3,7 +3,6 @@ version: '2'
 volumes:
     mariadb_data1:
     mariadb_data2:
-    mariadb_data3:
 
 services:
 
@@ -14,6 +13,7 @@ services:
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - GALERA_INIT=1
+      - GCOMM=mariadb1,mariadb2
       - WSREP_ON=1
 
   mariadb2:
@@ -25,17 +25,5 @@ services:
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - GALERA_INIT=0
-      - GCOMM=mariadb1,mariadb2,mariadb3
-      - WSREP_ON=1
-
-  mariadb3:
-    depends_on:
-      - mariadb1
-    image: mariadb:10.3-mine
-    volumes:
-      - 'mariadb_data3:/var/lib/mysql'
-    environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - GALERA_INIT=0
-      - GCOMM=mariadb1,mariadb2,mariadb3
+      - GCOMM=mariadb1,mariadb2
       - WSREP_ON=1

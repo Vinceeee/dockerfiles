@@ -8,5 +8,7 @@
  */
 
 CREATE USER 'galera'@'%' IDENTIFIED BY 'galera';
+/*
 CREATE DATABASE IF NOT EXISTS db_galera;
 GRANT  SELECT on db_galera.* TO 'galera'@'%';
+*/

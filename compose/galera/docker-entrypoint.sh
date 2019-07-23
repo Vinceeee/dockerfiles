@@ -24,23 +24,24 @@ function setup_gelera() {
     set +e
 
     DATA="$(_get_config 'datadir' "$@")"
-    GALERA_CONF=/etc/mysql/conf.d/gelera.cnf
+    GALERA_CONF=/etc/mysql/conf.d/galera.cnf
     if [ ! -d "$DATA/mysql" -a ${GALERA_INIT} = '1' ]; then
         echo "galera init ..."
+        sed -i "s?wsrep-cluster-address=.*?wsrep-cluster-address=gcomm://?g" ${GALERA_CONF}
         sed -i "s/wsrep-new-cluster=.*/wsrep-new-cluster=True/g" ${GALERA_CONF}
     elif [ -d "$DATA/mysql" -a ${GALERA_INIT} = '1' ]; then
         rc=wsrep_check
-        if [[ ${rc} -nq '0' ]]; then
-            echo "galera init ..."
-            sed -i "s?wsrep-cluster-address=.*?wsrep-cluster-address=gcomm//?g" ${GALERA_CONF}
+        if [[ $rc -ne 0 ]]; then
+            echo "galera init again..."
+            sed -i "s?wsrep-cluster-address=.*?wsrep-cluster-address=gcomm://?g" ${GALERA_CONF}
             sed -i "s/wsrep-new-cluster=.*/wsrep-new-cluster=True/g" ${GALERA_CONF}
         else
-            sed -i "s?wsrep-cluster-address=.*?wsrep-cluster-address=gcomm//${GCOMM}?g" ${GALERA_CONF}
+            sed -i "s?wsrep-cluster-address=.*?wsrep-cluster-address=gcomm://${GCOMM}?g" ${GALERA_CONF}
             sed -i "s/wsrep-new-cluster=.*/wsrep-new-cluster=False/g" ${GALERA_CONF}
         fi
     else
-        sleep 10s # wait for the 1st node to startup
-        sed -i "s?wsrep-cluster-address=.*?wsrep-cluster-address=gcomm//${GCOMM}?g" ${GALERA_CONF}
+        sleep 15s # wait for the 1st node to startup
+        sed -i "s?wsrep-cluster-address=.*?wsrep-cluster-address=gcomm://${GCOMM}?g" ${GALERA_CONF}
         sed -i "s/wsrep-new-cluster=.*/wsrep-new-cluster=False/g" ${GALERA_CONF}
     fi
     set -e
