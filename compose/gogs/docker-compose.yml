@@ -1,13 +1,14 @@
 version: '2'
 
 services:
-  app:
-    image: gogs/gogs:0.11.79
+
+  gogs:
+    image: gogs/gogs:0.11.86
     ports:
       - "10022:22"
       - "10080:3000"
     volumes:
-      - ./gogs:/data
+      - gogs:/data
     restart: always
 
   drone-server:
@@ -17,7 +18,7 @@ services:
     ports:
       - "8888:80"
     volumes:
-      - ./drone:/var/lib/drone
+      - drone:/var/lib/drone
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - DRONE_GOGS=true
@@ -26,3 +27,7 @@ services:
       - DRONE_GIT_ALWAYS_AUTH=false
       - DRONE_SERVER_HOST=drone-server
       - DRONE_SERVER_PROTO=http
+
+volumes:
+    drone:
+    gogs:
