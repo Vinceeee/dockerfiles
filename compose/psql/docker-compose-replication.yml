@@ -1,0 +1,40 @@
+version: '2'
+
+# reference : https://github.com/bitnami/bitnami-docker-postgresql
+
+services:
+  postgresql-master:
+    image: 'bitnami/postgresql:9.6'
+    ports:
+      - "5432:5432"
+    volumes:
+      - 'postgresql_master_data:/bitnami/postgresql'
+      - './conf:/bitnami/postgresql/conf/'
+      - './scripts.d:/docker-entrypoint-initdb.d'
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=master
+      - POSTGRESQL_REPLICATION_USER=repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD=repl_password
+      - POSTGRESQL_PASSWORD=123456
+        # enable synchronous commit for data stability
+      - POSTGRESQL_SYNCHRONOUS_COMMIT_MODE=on
+      - POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=1
+
+  postgresql-slave-1:
+    image: 'bitnami/postgresql:9.6'
+    volumes:
+      - './conf:/bitnami/postgresql/conf/'
+      - './scripts.d:/docker-entrypoint-initdb.d'
+    depends_on:
+      - postgresql-master
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_REPLICATION_USER=repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD=repl_password
+      - POSTGRESQL_MASTER_HOST=postgresql-master
+      - POSTGRESQL_PASSWORD=123456
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+
+volumes:
+  postgresql_master_data:
+    driver: local

@@ -75,3 +75,14 @@ docker run \
   docker run  -u root  --rm  -d  --name jenkins  -p 8080:8080  -p 50000:50000  -v ./jenkins-data:/var/jenkins_home  -v /var/run/docker.sock:/var/run/docker.sock jenkinsci/blueocean
 
 ```
+
+
+## Nexus3 (Yum/Pypi/Docker/Maven Registry)
+
+```bash
+# simple version
+docker run -d -p 8081:8081 --name nexus sonatype/nexus3
+# persistence
+docker volume create --name nexus-data
+docker run -d -p 8081:8081 --name nexus -v nexus-data:/nexus-data sonatype/nexus3
+```

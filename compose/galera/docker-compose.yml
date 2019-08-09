@@ -15,15 +15,17 @@ services:
       - GALERA_INIT=1
       - GCOMM=mariadb1,mariadb2
       - WSREP_ON=1
+      - MYSQL_INITDB_SKIP_TZINFO=1
+      - TZ='Asia/Shanghai'
 
   mariadb2:
-    depends_on:
-      - mariadb1
     image: mariadb:10.3-mine
     volumes:
       - 'mariadb_data2:/var/lib/mysql'
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - GALERA_INIT=0
       - GCOMM=mariadb1,mariadb2
       - WSREP_ON=1
+      - GALERA_INIT=0
+      - TZ='Asia/Shanghai'
+      - MYSQL_INITDB_SKIP_TZINFO=1

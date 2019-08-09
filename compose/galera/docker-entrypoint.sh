@@ -3,49 +3,6 @@ set -x
 set -eo pipefail
 shopt -s nullglob
 
-# wsrep checking
-function wsrep_check() {
-    echo "checking wsrep ..."
-    OLD_IFS=$IFS
-    IFS=,
-    for host in ${GCOMM};do
-        mysql -h ${host} -pgalera -e "select 1;"
-        rc=$?
-        if [[ $rc -eq 0 ]]; then
-            break
-        fi
-    done
-    IFS=$OLD_IFS
-    return $rc
-}
-
-# gelera setup
-function setup_gelera() {
-    set +e
-
-    DATA="$(_get_config 'datadir' "$@")"
-    GALERA_CONF=/etc/mysql/conf.d/galera.cnf
-    if [ ! -d "$DATA/mysql" -a ${GALERA_INIT} = '1' ]; then
-        echo "galera init ..."
-        sed -i "s?wsrep-cluster-address=.*?wsrep-cluster-address=gcomm://?g" ${GALERA_CONF}
-        sed -i "s/wsrep-new-cluster=.*/wsrep-new-cluster=True/g" ${GALERA_CONF}
-    elif [ -d "$DATA/mysql" -a ${GALERA_INIT} = '1' ]; then
-        rc=wsrep_check
-        if [[ $rc -ne 0 ]]; then
-            echo "galera init again..."
-            sed -i "s?wsrep-cluster-address=.*?wsrep-cluster-address=gcomm://?g" ${GALERA_CONF}
-            sed -i "s/wsrep-new-cluster=.*/wsrep-new-cluster=True/g" ${GALERA_CONF}
-        else
-            sed -i "s?wsrep-cluster-address=.*?wsrep-cluster-address=gcomm://${GCOMM}?g" ${GALERA_CONF}
-            sed -i "s/wsrep-new-cluster=.*/wsrep-new-cluster=False/g" ${GALERA_CONF}
-        fi
-    else
-        sleep 15s # wait for the 1st node to startup
-        sed -i "s?wsrep-cluster-address=.*?wsrep-cluster-address=gcomm://${GCOMM}?g" ${GALERA_CONF}
-        sed -i "s/wsrep-new-cluster=.*/wsrep-new-cluster=False/g" ${GALERA_CONF}
-    fi
-    set -e
-}
 
 # if command starts with an option, prepend mysqld
 if [ "${1:0:1}" = '-' ]; then
@@ -116,11 +73,6 @@ if [ "$1" = 'mysqld' -a -z "$wantHelp" -a "$(id -u)" = '0' ]; then
 	mkdir -p "$DATADIR"
 	find "$DATADIR" \! -user mysql -exec chown mysql '{}' +
 
-        # setup gelera if required
-        if [[ ${WSREP_ON} -eq 1 ]]; then
-            setup_gelera
-        fi
-
 	exec gosu mysql "$BASH_SOURCE" "$@"
 
 fi
@@ -132,6 +84,9 @@ if [ "$1" = 'mysqld' -a -z "$wantHelp" ]; then
 	DATADIR="$(_get_config 'datadir' "$@")"
 
 	if [ ! -d "$DATADIR/mysql" ]; then
+                if [ ${GALERA_INIT} -eq 1 ];then
+                        set -- "$@" "--wsrep-new-cluster"
+                fi
 		file_env 'MYSQL_ROOT_PASSWORD'
 		if [ -z "$MYSQL_ROOT_PASSWORD" -a -z "$MYSQL_ALLOW_EMPTY_PASSWORD" -a -z "$MYSQL_RANDOM_ROOT_PASSWORD" ]; then
 			echo >&2 'error: database is uninitialized and password option is not specified '

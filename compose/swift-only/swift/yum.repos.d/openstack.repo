@@ -1,0 +1,4 @@
+[Openstack-pike]
+name=Openstack-pike
+baseurl=https://mirrors.aliyun.com/centos/7/cloud/x86_64/openstack-pike/
+gpgcheck=0

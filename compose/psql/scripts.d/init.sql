@@ -1,5 +1,5 @@
 /*
- * init_galera.sql
+ * init.sql
  * Copyright (C) 2019 vince <vince@tang-pc>
  *
     init a galera user for gluster health check
@@ -7,8 +7,9 @@
  * Distributed under terms of the MIT license.
  */
 
-CREATE USER IF NOT EXISTS 'galera'@'%' IDENTIFIED BY 'galera';
-/*
-CREATE DATABASE IF NOT EXISTS db_galera;
-GRANT  SELECT on db_galera.* TO 'galera'@'%';
+/* 
+CREATE USER "test" with password '123456';
 */
+CREATE USER "test";
+ALTER USER "test" password '123456';
+CREATE DATABASE db_test ENCODING 'utf8' OWNER "test";

@@ -6,9 +6,8 @@ binlog_format=row
 default_storage_engine=InnoDB
 innodb_autoinc_lock_mode=2
 wsrep_cluster_name=galera_cluster
-wsrep-cluster-address=gcomm://{GCOMM}
+wsrep-cluster-address=gcomm://
 wsrep_sst_method=rsync
-wsrep-new-cluster=False
 
 [mysqld]
 max_allowed_packet=32M
