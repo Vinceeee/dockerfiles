@@ -1,9 +1,7 @@
 #!/bin/bash
 
+set -x
 set -e
-
-# run this image locally:
-# docker run -d  -e SWIFT_LOOP=2G -e SWIFT_REPLICAS=2 --privileged --network=host --name=swift --hostname=swift1 -v /sys/fs/cgroup:/sys/fs/cgroup:ro
 
 function entrypoint_for_saio() {
     devices=$SWIFT_DEVICES

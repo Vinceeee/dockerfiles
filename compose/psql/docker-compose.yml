@@ -9,11 +9,22 @@ services:
       - "5432:5432"
     volumes:
       - 'postgresql_master_data:/bitnami/postgresql'
-#     - './conf:/bitnami/postgresql/conf/'
+      - './conf:/bitnami/postgresql/conf/'
     environment:
       - POSTGRESQL_USERNAME=postgres
       - POSTGRESQL_PASSWORD=123456
       - POSTGRESQL_DATABASE=abc
+
+
+  phadmin:
+    image: 'dpage/pgadmin4'
+    ports:
+      - "34080:80"
+      - "34443:443"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=vince@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=123456
+
 
 volumes:
   postgresql_master_data:

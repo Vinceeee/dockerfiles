@@ -2,7 +2,6 @@ version: '2'
 
 volumes:
   rings:
-  share_data:
 
 networks:
   innet:
@@ -11,12 +10,6 @@ networks:
       config:
       - subnet: 172.11.10.0/24
         gateway: 172.11.10.200
-  outnet:
-    ipam:
-      driver: default
-      config:
-      - subnet: 172.10.10.0/24
-        gateway: 172.10.10.200
 
 services:
 
@@ -28,12 +21,14 @@ services:
       - RING_DIR=/swift-rings
       - REPLICAS=2
       - POWER=10
+      - HOSTS=172.11.10.100
+      - DEVICES=swift1,swift2,swift3
     volumes:
       - ./bin:/usr/local/bin
       - rings:/swift-rings
 
-  proxy:
-    container_name: proxy
+  swift:
+    container_name: swift
     restart: always
     depends_on:
       - init_swift_ring
@@ -41,47 +36,13 @@ services:
       - "8080:8080"
     image: swift:2.15.2
     environment:
-      - SWIFT_TYPE=proxy
+      - SWIFT_TYPE=saio  # swift_type supports proxy/storage/saio
       - RING_DIR=/swift-rings
+      - REPLICAS=2
+      - SWIFT_LOOP=1
+      - DEVICES=swift1,swift2,swift3
     volumes:
-      - share_data:/share
       - rings:/swift-rings
     networks:
-      outnet:
-        ipv4_address: 172.10.10.100
       innet:
         ipv4_address: 172.11.10.100
-
-  storage1:
-    container_name: storage1
-    restart: always
-    image: swift:2.15.2
-    depends_on:
-      - init_swift_ring
-    environment:
-      - SWIFT_TYPE=storage
-      - RING_DIR=/swift-rings
-      - SWIFT_DEVICES=swift1,swift2
-    volumes:
-      - share_data:/share
-      - rings:/swift-rings
-    networks:
-      innet:
-        ipv4_address: 172.11.10.1
-
-  storage2:
-    container_name: storage2
-    restart: always
-    build: ./swift
-    depends_on:
-      - init_swift_ring
-    environment:
-      - SWIFT_TYPE=storage
-      - RING_DIR=/swift-rings
-      - SWIFT_DEVICES=swift1,swift2
-    volumes:
-      - share_data:/share
-      - rings:/swift-rings
-    networks:
-      innet:
-        ipv4_address: 172.11.10.2

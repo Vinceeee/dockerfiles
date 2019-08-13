@@ -42,8 +42,10 @@ export OS_IDENTITY_API_VERSION=3
 ###3. Test
 
 ```bash
-# Check whether swift proxy is available
+# enter container and
+# check whether swift proxy is available
 curl -v -H 'X-Storage-User: test:tester' -H 'X-Storage-Pass: testing' http://127.0.0.1:8080/auth/v1.0
-swift -A http://127.0.0.1:8080 -U test:tester -K testing stat  # test stat
-swift -A http://127.0.0.1:8080 -U test:tester -K testing upload abc /etc/yum.repos.d # test upload
+swift  -A http://127.0.0.1:8080/auth/v1.0 -U test:tester -K testing stat --debug
+swift  -A http://127.0.0.1:8080/auth/v1.0 -U test:tester -K testing upload abc /etc/swift
+
 ```
