@@ -13,14 +13,13 @@ COPY bin/init_services.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/* && ln -s /usr/local/bin/entrypoint.sh /entrypoint.sh # backward compat
 
 # env listed below
-ENV ADMIN_PASS 123456
-ENV DB_CONNECTION sqlite:///keystone.db
 # for mariadb 
 # ENV DB_CONNECTION mysql+pymysql://keystone:<DB_PASSWD>@<MYSQL_HOST>/keystone
-ENV KEYSTONE_BIND_IP 127.0.0.1
-ENV MEMCACHED_SERVER 127.0.0.1:11211
-
-ENV SWIFT_ENDPOINT swift:8080
+ENV ADMIN_PASS 123456 \
+    DB_CONNECTION sqlite:///keystone.db \
+    KEYSTONE_BIND_IP 127.0.0.1 \
+    MEMCACHED_SERVER 127.0.0.1:11211 \
+    SWIFT_ENDPOINT swift:8080
 
 ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 5000

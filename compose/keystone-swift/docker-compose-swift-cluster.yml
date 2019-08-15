@@ -7,6 +7,7 @@ volumes:
     db:
 
 # outnet - external network connection
+# innet - internal network connection ( for tranfering swift data )
 networks:
   outnet:
     ipam:
@@ -14,6 +15,12 @@ networks:
       config:
       - subnet: 172.10.10.0/24
         gateway: 172.10.10.200
+  innet:
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.11.10.0/24
+        gateway: 172.11.10.200
 
 services:
   db:
@@ -55,31 +62,61 @@ services:
       - RING_DIR=/swift-rings
       - REPLICAS=2
       - POWER=10
-      - HOSTS=172.10.10.100
-      - DEVICES=swift1,swift2,swift3
     volumes:
       - share_data:/share
       - ./bin:/usr/local/bin
       - /tmp/rings:/swift-rings
 
-  swift:
-    container_name: swift
+  proxy:
+    container_name: proxy
     restart: always
     depends_on:
       - init_swift_ring
     ports:
       - "8080:8080"
-#   build: ./swift
-    image: swift:rocky
+    build: ./swift
     environment:
-      - SWIFT_TYPE=saio
+      - SWIFT_TYPE=proxy
       - RING_DIR=/swift-rings
-      - REPLICAS=2
-      - SWIFT_LOOP=1
-      - SWIFT_DEVICES=swift1,swift2,swift3
     volumes:
       - share_data:/share
       - /tmp/rings:/swift-rings
     networks:
       outnet:
         ipv4_address: 172.10.10.100
+      innet:
+        ipv4_address: 172.11.10.100
+
+  storage1:
+    container_name: storage1
+    restart: always
+    build: ./swift
+    depends_on:
+      - init_swift_ring
+    environment:
+      - SWIFT_TYPE=storage
+      - RING_DIR=/swift-rings
+      - SWIFT_DEVICES=swift1,swift2
+    volumes:
+      - share_data:/share
+      - /tmp/rings:/swift-rings
+    networks:
+      innet:
+        ipv4_address: 172.11.10.1
+
+  storage2:
+    container_name: storage2
+    restart: always
+    build: ./swift
+    depends_on:
+      - init_swift_ring
+    environment:
+      - SWIFT_TYPE=storage
+      - RING_DIR=/swift-rings
+      - SWIFT_DEVICES=swift1,swift2
+    volumes:
+      - share_data:/share
+      - /tmp/rings:/swift-rings
+    networks:
+      innet:
+        ipv4_address: 172.11.10.2
